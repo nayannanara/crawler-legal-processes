@@ -1,0 +1,33 @@
+test:
+	@pytest
+
+test-matching:
+	@pytest -s -rx -k $(Q) --pdb core ./tests/
+
+coverage:
+	@pytest --cov=apps --cov=core --cov-report=term-missing --cov-report=xml ./tests/	
+
+mypy:
+	@mypy core/
+
+flake8:
+	@flake8 core/
+	@flake8 tests/ --extend-ignore=ANN
+
+isort-check:
+	@isort -c --profile=black -l 120 .
+
+isort:
+	@isort --profile=black -l 120 .
+
+blue:
+	@blue .
+
+blue-check:
+	@blue --check .
+
+lint: isort blue
+
+lint-check: mypy flake8 isort-check blue-check bandit dead-fixtures
+
+build: lint-check test
