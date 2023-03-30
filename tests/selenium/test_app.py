@@ -51,7 +51,7 @@ def test_get_basic_data(
 
 
 def test_run_processes(process_number_tjal, process_number_tjce):
-    from core.selenium.app import ProcessesScraping
+    from core.scrapper.selenium.app import ProcessesScraping
     from utils.driver_selenium import selenium_driver
 
     driver = selenium_driver.driver

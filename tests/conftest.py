@@ -1,7 +1,7 @@
 import pytest
 from selenium.webdriver.common.by import By
 
-from core.selenium.app import ProcessesScraping
+from core.scrapper.selenium.app import ProcessesScraping
 from utils.driver_selenium import selenium_driver
 
 
