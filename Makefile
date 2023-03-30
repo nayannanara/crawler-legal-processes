@@ -31,3 +31,12 @@ lint: isort blue
 lint-check: mypy flake8 isort-check blue-check bandit dead-fixtures
 
 build: lint-check test
+
+run:
+	@uvicorn core.main:app --reload
+
+run-migrations:
+	@PYTHONPATH=$PYTHONPATH:$(pwd) alembic upgrade head
+
+create-migrations:
+	@PYTHONPATH=$PYTHONPATH:$(pwd) alembic revision --autogenerate -m $(description)	
