@@ -1,0 +1,11 @@
+version: "3"
+services:
+  db:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_PASSWORD: crawler_processes
+      POSTGRES_USER: crawler_processes
+      POSTGRES_DB: crawler_processes
+    ports:
+      - "5432:5432"
+  
