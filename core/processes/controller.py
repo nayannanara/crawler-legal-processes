@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
@@ -16,31 +14,31 @@ router = APIRouter()
     path='',
     summary='Create a new Process',
     status_code=status.HTTP_201_CREATED,
-    response_model=ProcessOut,
 )
 async def post(
     process_in: ProcessIn = Body(...),
     use_case: ProcessUseCase = Depends(),
     db_session: AsyncSession = Depends(get_session),
-) -> ProcessOut:
+    response_model=list[ProcessOut]
+) -> list[ProcessOut]:
     try:
-        process = await use_case.create(
+        processes = await use_case.create(
             process_in=process_in, db_session=db_session
         )
     except DatabaseException:
         raise HTTPException(status_code=status.HTTP_303_SEE_OTHER)
 
-    return process
+    return processes
 
 
 @router.get(
-    '/', status_code=status.HTTP_200_OK, response_model=List[ProcessOut]
+    '/', status_code=status.HTTP_200_OK, response_model=list[ProcessOut]
 )
 async def query(
     use_case: ProcessUseCase = Depends(),
     db_session: AsyncSession = Depends(get_session),
-) -> List[ProcessOut]:
-    processes: List[ProcessOut] = await use_case.query(db_session=db_session)
+) -> list[ProcessOut]:
+    processes = await use_case.query(db_session=db_session)
 
     return processes
 

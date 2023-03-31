@@ -1,5 +1,7 @@
 from datetime import datetime
+from typing import Optional
 
+import orjson
 from pydantic import Field
 
 from core.contrib.schemas import BaseSchemaMixin
@@ -18,30 +20,43 @@ class Process(BaseSchemaMixin):
     process_number: str = Field(
         ..., title='Process number', example='07108025520188020001'
     )
-    class_: str = Field(
+    class_: Optional[str] = Field(
+        nullable=True,
         alias='class',
         title='Process class',
         example='Procedimento Comum Cível',
     )
-    area: str = Field(title='Process area', example='Cível')
-    topic: str = Field(title='Process topic', example='Dano Material')
-    distribution_date: datetime = Field(
-        title='Date of distribution of process', example='02/05/2018 19:01'
+    area: Optional[str] = Field(nullable=True, title='Process area', example='Cível')
+    topic: Optional[str] = Field(
+        nullable=True, title='Process topic', example='Dano Material'
     )
-    judge: str = Field(
-        title='Process judge', example='José Cícero Alves da Silva'
+    distribution_date: Optional[datetime] = Field(
+        nullable=True,
+        title='Date of distribution of process',
+        example='02/05/2018 19:01',
     )
-    stock_price: str = Field(title='Stock price', example='281.178,42')
+    judge: Optional[str] = Field(
+        nullable=True,
+        title='Process judge',
+        example='José Cícero Alves da Silva',
+    )
+    stock_price: Optional[str] = Field(
+        nullable=True, title='Stock price', example='281.178,42'
+    )
     process_parties: dict[str, list[str]] = Field(
+        nullable=True,
         title='Process parties',
         example={
             'authors': ['José Carlos Cerqueira Souza Filho'],
             'defendants': ['Cony Engenharia Ltda.'],
         },
     )
-    degree: str = Field(title='Process degree', example='1º Grau')
-    state: str = Field(title='Process state', example='TJAL')
+    degree: Optional[str] = Field(
+        nullable=True, title='Process degree', example='1º Grau'
+    )
+    state: Optional[str] = Field(nullable=True, title='Process state', example='TJAL')
     movimentations: list[Movimentation] = Field(
+        nullable=True,
         title='Process movimentations',
         example=[
             {
@@ -53,8 +68,13 @@ class Process(BaseSchemaMixin):
 
 
 class ProcessOut(Process):
-    id: int
-    created_at: datetime = Field(title='Creation date')
+    created_at: datetime = Field(
+        default_factory=datetime.now, title='Creation date'
+    )
+
+    class Config:
+        json_loads = orjson.loads
+        json_dumps = orjson.dumps
 
 
 class ProcessIn(BaseSchemaMixin):

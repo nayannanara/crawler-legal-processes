@@ -11,7 +11,7 @@ class Process(BaseModel):
     __tablename__ = 'processes'
 
     id: Mapped[int] = mapped_column(
-        Integer, primary_key=True, autoincrement=True
+        BigInteger, primary_key=True, autoincrement=True, index=True
     )
     process_number: Mapped[str] = mapped_column(String, nullable=False)
     class_: Mapped[str] = mapped_column(String, nullable=True)
@@ -25,8 +25,8 @@ class Process(BaseModel):
     process_parties: Mapped[dict[str, list[str]]] = mapped_column(
         JSONB(), nullable=True
     )
-    degree: Mapped[str] = mapped_column(String, nullable=False)
-    state: Mapped[str] = mapped_column(String, nullable=False)
+    degree: Mapped[str] = mapped_column(String, nullable=True)
+    state: Mapped[str] = mapped_column(String, nullable=True)
     movimentations: Mapped[list['Movimentation']] = relationship(
         'Movimentation', lazy='selectin'
     )

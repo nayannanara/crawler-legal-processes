@@ -7,17 +7,18 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
 from utils.driver_selenium import selenium_driver
+from utils.helpers import format_date
 from utils.urls import URLS
 
 
 class ProcessesScraping:
-    def __init__(self: 'ProcessesScraping', driver: WebDriver) -> None:
-        self.driver = driver
+    def __init__(self: 'ProcessesScraping') -> None:
+        self.driver: WebDriver = selenium_driver.driver
         self.process_number: str = ''
 
-    def run(self: 'ProcessesScraping', input: str) -> dict[str, str]:
+    def run(self: 'ProcessesScraping', input: str) -> list[dict[str, str]]:
         processes = input.split(',')
-        payload: dict[str, str] = {}
+        payload: list[dict[str, str]] = []
 
         for process in processes:
             self.process_number = process.strip()
@@ -47,11 +48,11 @@ class ProcessesScraping:
                 new_urls = self.verify_url(url)
 
                 if not len(new_urls) > 1:
-                    self.initial_process(payload)
+                    self.get_basic_data(payload)
                 else:
                     for url in new_urls:
                         self.driver.get(url)
-                        self.initial_process(payload)
+                        self.get_basic_data(payload)
 
         return payload
 
@@ -78,42 +79,26 @@ class ProcessesScraping:
 
         return new_urls
 
-    def initial_process(
-        self: 'ProcessesScraping', payload: dict
-    ) -> dict[str, str]:
-        degree = self.driver.find_element(By.TAG_NAME, 'h1').text[-7:]
-        site = self.driver.find_element(
-            By.CLASS_NAME, 'header__navbar__brand__initials'
-        ).text
 
-        key_name = f'{degree} - {site}'
-
-        if self.process_number not in payload:
-            payload[self.process_number] = {}
-
-        if key_name not in payload[self.process_number]:
-            payload[self.process_number][key_name] = []
-
-        if self.process_number in payload:
-            payload[self.process_number][key_name].append(
-                self.get_basic_data()
-            )
-
-        return payload
-
-    def get_basic_data(self: 'ProcessesScraping') -> dict:
+    def get_basic_data(
+        self: 'ProcessesScraping', payload: list[dict[str, str]]
+    ) -> dict:
         details = self.driver.find_element(By.ID, 'maisDetalhes')
 
         self.driver.execute_script(
             "arguments[0].setAttribute('class','collapse show')", details
         )
+        degree = self.driver.find_element(By.TAG_NAME, 'h1').text[-7:]
+        state = self.driver.find_element(
+            By.CLASS_NAME, 'header__navbar__brand__initials'
+        ).text
 
         try:
             class_ = self.driver.find_element(
                 By.ID, 'classeProcesso'
             ).text.strip()
         except NoSuchElementException:
-            class_ = ''
+            class_ = None
 
         area = self.driver.find_element(By.ID, 'areaProcesso').text.strip()
         topic = self.driver.find_element(By.ID, 'assuntoProcesso').text.strip()
@@ -121,31 +106,30 @@ class ProcessesScraping:
             distribution_date_str = self.driver.find_element(
                 By.ID, 'dataHoraDistribuicaoProcesso'
             ).text.split('-')
-            distribution_date = (
+            new_distribution_date = (
                 distribution_date_str[0]
                 .strip()
                 .replace('às', '')
                 .replace('  ', ' ')
                 .strip()
             )
-            # distribution_date_formated = datetime.strptime(distribution_date, "%d/%m/%Y %H:%M")
+            distribution_date = format_date(new_distribution_date)
         except NoSuchElementException:
-            distribution_date = ''
+            distribution_date = None
 
         try:
             judge = self.driver.find_element(
                 By.ID, 'juizProcesso'
             ).text.strip()
         except NoSuchElementException:
-            judge = ''
+            judge = None
 
         try:
             stock_price = self.driver.find_element(
                 By.ID, 'valorAcaoProcesso'
             ).text.strip()
         except NoSuchElementException:
-            stock_price = ''
-        # stock_price_formated = float(stock_price.split()[1].replace(".", "").replace(",", "."))
+            stock_price = None
 
         data = {
             'process_number': self.process_number,
@@ -155,6 +139,8 @@ class ProcessesScraping:
             'distribution_date': distribution_date,
             'judge': judge,
             'stock_price': stock_price,
+            'degree': degree,
+            'state': state,
         }
 
         data.update(
@@ -164,7 +150,7 @@ class ProcessesScraping:
             }
         )
 
-        return data
+        return payload.append(data)
 
     def get_process_parties(self: 'ProcessesScraping') -> dict[Any, Any]:
         try:
@@ -258,6 +244,3 @@ class ProcessesScraping:
             )
 
         return movimentations
-
-
-scraping = ProcessesScraping(selenium_driver.driver)
