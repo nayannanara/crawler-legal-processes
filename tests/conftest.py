@@ -6,6 +6,11 @@ from utils.driver_selenium import selenium_driver
 
 
 @pytest.fixture
+def scraping():
+    return ProcessesScraping()
+
+
+@pytest.fixture
 def process_number_tjal() -> str:
     return '07108025520188020001'
 
@@ -39,7 +44,7 @@ def url_tjce_2g() -> str:
 def processes_scraping_factory():
     def _factory(url, process_number):
         driver = selenium_driver.driver
-        scraping = ProcessesScraping(driver)
+        scraping = ProcessesScraping()
         scraping.process_number = process_number
 
         driver.get(url)

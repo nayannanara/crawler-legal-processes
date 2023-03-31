@@ -26,7 +26,9 @@ class Process(BaseSchemaMixin):
         title='Process class',
         example='Procedimento Comum Cível',
     )
-    area: Optional[str] = Field(nullable=True, title='Process area', example='Cível')
+    area: Optional[str] = Field(
+        nullable=True, title='Process area', example='Cível'
+    )
     topic: Optional[str] = Field(
         nullable=True, title='Process topic', example='Dano Material'
     )
@@ -54,7 +56,9 @@ class Process(BaseSchemaMixin):
     degree: Optional[str] = Field(
         nullable=True, title='Process degree', example='1º Grau'
     )
-    state: Optional[str] = Field(nullable=True, title='Process state', example='TJAL')
+    state: Optional[str] = Field(
+        nullable=True, title='Process state', example='TJAL'
+    )
     movimentations: list[Movimentation] = Field(
         nullable=True,
         title='Process movimentations',

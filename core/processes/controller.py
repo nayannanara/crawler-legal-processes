@@ -1,6 +1,6 @@
+from typing import List
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import select
 
 from core.configs.deps import get_session
 from core.contrib.exceptions import DatabaseException, ObjectNotFound
@@ -19,25 +19,24 @@ async def post(
     process_in: ProcessIn = Body(...),
     use_case: ProcessUseCase = Depends(),
     db_session: AsyncSession = Depends(get_session),
-    response_model=list[ProcessOut]
-) -> list[ProcessOut]:
+) -> List[ProcessOut]:
     try:
         processes = await use_case.create(
             process_in=process_in, db_session=db_session
         )
     except DatabaseException:
-        raise HTTPException(status_code=status.HTTP_303_SEE_OTHER)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return processes
 
 
 @router.get(
-    '/', status_code=status.HTTP_200_OK, response_model=list[ProcessOut]
+    '/', status_code=status.HTTP_200_OK
 )
 async def query(
     use_case: ProcessUseCase = Depends(),
     db_session: AsyncSession = Depends(get_session),
-) -> list[ProcessOut]:
+) -> List[ProcessOut]:
     processes = await use_case.query(db_session=db_session)
 
     return processes

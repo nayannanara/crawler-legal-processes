@@ -21,7 +21,7 @@ class Process(BaseModel):
         DateTime, nullable=True
     )
     judge: Mapped[str] = mapped_column(String, nullable=True)
-    stock_price: Mapped[str] = mapped_column(String())
+    stock_price: Mapped[str] = mapped_column(String(), nullable=True)
     process_parties: Mapped[dict[str, list[str]]] = mapped_column(
         JSONB(), nullable=True
     )

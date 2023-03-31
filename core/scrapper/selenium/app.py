@@ -12,8 +12,9 @@ from utils.urls import URLS
 
 
 class ProcessesScraping:
+    driver: WebDriver = selenium_driver.driver
+
     def __init__(self: 'ProcessesScraping') -> None:
-        self.driver: WebDriver = selenium_driver.driver
         self.process_number: str = ''
 
     def run(self: 'ProcessesScraping', input: str) -> list[dict[str, str]]:
@@ -79,10 +80,9 @@ class ProcessesScraping:
 
         return new_urls
 
-
     def get_basic_data(
         self: 'ProcessesScraping', payload: list[dict[str, str]]
-    ) -> dict:
+    ) -> None:
         details = self.driver.find_element(By.ID, 'maisDetalhes')
 
         self.driver.execute_script(
@@ -149,8 +149,7 @@ class ProcessesScraping:
                 'movimentations': self.get_movimentations(),  # type: ignore
             }
         )
-
-        return payload.append(data)
+        payload.append(data)
 
     def get_process_parties(self: 'ProcessesScraping') -> dict[Any, Any]:
         try:
