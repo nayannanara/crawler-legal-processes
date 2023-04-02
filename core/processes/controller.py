@@ -25,8 +25,16 @@ async def post(
         processes = await use_case.create(
             process_in=process_in, db_session=db_session
         )
-    except DatabaseException:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except DatabaseException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=exc.message,
+        )
+    except ObjectNotFound as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=exc.message,
+        )
 
     return processes
 

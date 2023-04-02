@@ -1,11 +1,16 @@
+from unittest import mock
+
 import pytest
+import sqlalchemy
 from fastapi import status
 
 from core.processes.schemas import ProcessOut
 
 
-@pytest.mark.asyncio
-async def test_integration_get_processes_should_return_success(client, get_url, create_processes):
+@pytest.mark.usefixtures('create_processes')
+async def test_integration_get_processes_should_return_success(
+    client, get_url
+):
     response = await client.get(get_url)
 
     content = response.json()
@@ -45,13 +50,23 @@ async def test_integration_get_processes_should_return_success(client, get_url, 
         'state': 'TJAL',
     }
 
-#f'{process_number_tjce},{process_number_tjal}'}
-@pytest.mark.asyncio
+
+async def test_integration_get_processes_should_not_found(client, get_url):
+    response = await client.get(get_url)
+
+    content = response.json()
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert content == {
+        'detail': 'Process not found for number: 07108025520188020001'
+    }
+
+
 async def test_integration_post_processes_should_return_success(
-    client, post_url, process_number_tjce, process_number_tjal
+    client, post_url, process_number_tjal
 ):
     response = await client.post(
-        post_url, json={'process_number': process_number_tjce}
+        post_url, json={'process_number': process_number_tjal}
     )
 
     content = response.json()
@@ -67,7 +82,62 @@ async def test_integration_post_processes_should_return_success(
     )
 
 
-@pytest.mark.asyncio
+@mock.patch('sqlalchemy.ext.asyncio.AsyncSession.commit')
+async def test_integration_post_processes_should_return_internal_server_error(
+    mock_commit, client, post_url, process_number_tjal
+):
+    mock_commit.side_effect = sqlalchemy.exc.IntegrityError(
+        mock.MagicMock(), mock.MagicMock(), mock.MagicMock()
+    )
+
+    response = await client.post(
+        post_url, json={'process_number': process_number_tjal}
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json() == {
+        'detail': 'Ocorreu um erro ao inserir o dado no banco de dados.'
+    }
+
+
+async def test_integration_post_processes_with_more_than_one_process_should_return_success(
+    client, post_url, process_number_tjce, process_number_tjal
+):
+    response = await client.post(
+        post_url,
+        json={
+            'process_number': f'{process_number_tjce},{process_number_tjal}'
+        },
+    )
+
+    content = response.json()
+
+    process_out = ProcessOut.parse_obj(content[0])
+
+    del content[0]['created_at']
+    del content[0]['distribution_date']
+
+    assert (process_number_tjce or process_number_tjal) in [
+        i['process_number'] for i in content
+    ]
+
+    assert response.status_code == status.HTTP_201_CREATED
+    assert content[0] == process_out.dict(
+        by_alias=True, exclude={'distribution_date', 'created_at'}
+    )
+
+
+async def test_integration_post_processes_with_return_unprocessable_entity(
+    client, post_url
+):
+    response = await client.post(
+        post_url, json={'process_number': '12344479120088060001'}
+    )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.json() == {'detail': 'Processo(s) não encontrado(s)'}
+
+
 async def test_integration_query_processes_should_return_success(
     client, query_url, create_processes
 ):
@@ -93,3 +163,14 @@ async def test_integration_query_processes_should_return_success(
         'degree': '1º Grau',
         'state': 'TJAL',
     }
+
+
+async def test_integration_query_processes_should_empty_list(
+    client, query_url
+):
+    response = await client.get(query_url)
+
+    content = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert content == []

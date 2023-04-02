@@ -12,3 +12,7 @@ class ObjectNotFound(BaseException):
 
 class DatabaseException(BaseException):
     pass
+
+
+class ProcessesNotFound(BaseException):
+    pass

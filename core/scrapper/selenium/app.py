@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
+from core.contrib.exceptions import ProcessesNotFound
 from utils.driver_selenium import selenium_driver
 from utils.helpers import format_date
 from utils.urls import URLS
@@ -57,6 +58,9 @@ class ProcessesScraping:
 
         logger.info('Extração de dados finalizada')
 
+        if not payload:
+            raise ProcessesNotFound(message='Este processo não foi encontrado')
+
         return payload
 
     def verify_url(self: 'ProcessesScraping', url: str) -> list[str]:
@@ -82,9 +86,7 @@ class ProcessesScraping:
 
         return new_urls
 
-    def get_basic_data(
-        self: 'ProcessesScraping', payload: list
-    ) -> None:
+    def get_basic_data(self: 'ProcessesScraping', payload: list) -> None:
         logger.info('Iniciando extração dos dados básicos do processo')
 
         details = self.driver.find_element(By.ID, 'maisDetalhes')

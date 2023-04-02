@@ -10,14 +10,12 @@ from core.processes.schemas import Movimentation, ProcessIn, ProcessOut
         {'process_number': '07108025520188020001'},
     ],
 )
-@pytest.mark.asyncio
 async def test_schemas_process_in(payload):
     process_in = ProcessIn.parse_obj(payload)
 
     assert process_in.process_number == payload['process_number']
 
 
-@pytest.mark.asyncio
 async def test_schemas_process_out(payload):
 
     processes = [ProcessOut.parse_obj(data) for data in payload]

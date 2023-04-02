@@ -5,7 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
 from core.configs.deps import get_session
-from core.contrib.exceptions import DatabaseException, ObjectNotFound
+from core.contrib.exceptions import (
+    DatabaseException,
+    ObjectNotFound,
+    ProcessesNotFound,
+)
 from core.processes.models import Movimentation, Process
 from core.processes.schemas import ProcessIn, ProcessOut
 from core.scrapper.selenium.app import ProcessesScraping
@@ -35,11 +39,13 @@ class ProcessUseCase:
                 db_session.add(process_model)
                 await db_session.commit()
 
-                logger.info(f'Processo criado: {process}')
-        except sqlalchemy.exc.IntegrityError as exc:
+                logger.info(f'Processo criado: {process.process_number}')
+        except sqlalchemy.exc.IntegrityError:
             raise DatabaseException(
-                message=f'An unexpected error occurred with the database with error: {exc}'
+                message=f'Ocorreu um erro ao inserir o dado no banco de dados.'
             )
+        except ProcessesNotFound:
+            raise ObjectNotFound(message=f'Processo(s) não encontrado(s)')
 
         return [ProcessOut.from_orm(process) for process in processes]
 
