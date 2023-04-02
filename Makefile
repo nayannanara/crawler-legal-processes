@@ -1,11 +1,14 @@
 test:
-	@pytest
+	@pytest -k 'not test_selenium' 
 
 test-matching:
 	@pytest -s -rx -k $(Q) --pdb core ./tests/
 
+coverage-without-selenium:
+	@pytest -k 'not test_selenium' --cov=apps --cov=core --cov-report=term-missing --cov-report=xml ./tests/
+
 coverage:
-	@pytest --cov=apps --cov=core --cov-report=term-missing --cov-report=xml ./tests/	
+	@pytest --cov=apps --cov=core --cov-report=term-missing --cov-report=xml ./tests/		
 
 mypy:
 	@mypy core/

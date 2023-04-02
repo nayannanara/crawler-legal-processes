@@ -1,5 +1,6 @@
 import sqlalchemy
 from fastapi import Depends
+from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import select
 
@@ -33,6 +34,8 @@ class ProcessUseCase:
                 )
                 db_session.add(process_model)
                 await db_session.commit()
+
+                logger.info(f'Processo criado: {process}')
         except sqlalchemy.exc.IntegrityError as exc:
             raise DatabaseException(
                 message=f'An unexpected error occurred with the database with error: {exc}'

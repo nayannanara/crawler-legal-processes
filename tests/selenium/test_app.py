@@ -2,7 +2,7 @@ import pytest
 
 
 @pytest.mark.parametrize('code', ['P00006BXP0000', 'P00006BXP12KW'])
-def test_verify_url(
+def test_selenium_verify_url(
     code, processes_scraping_factory, process_number_tjal, url_tjal_2g
 ):
     scraping = processes_scraping_factory(url_tjal_2g, process_number_tjal)
@@ -15,7 +15,7 @@ def test_verify_url(
     )
 
 
-def test_get_basic_data(
+def test_selenium_get_basic_data(
     processes_scraping_factory, process_number_tjal, url_tjal_1g
 ):
     scraping = processes_scraping_factory(url_tjal_1g, process_number_tjal)
@@ -25,7 +25,7 @@ def test_get_basic_data(
     assert result is None
 
 
-def test_get_process_parties(
+def test_selenium_get_process_parties(
     processes_scraping_factory, process_number_tjal, url_tjal_1g
 ):
     scraping = processes_scraping_factory(url_tjal_1g, process_number_tjal)
@@ -51,7 +51,7 @@ def test_get_process_parties(
     }
 
 
-def test_get_movimentations(
+def test_selenium_get_movimentations(
     processes_scraping_factory, process_number_tjal, url_tjal_1g
 ):
     scraping = processes_scraping_factory(url_tjal_1g, process_number_tjal)
@@ -98,7 +98,7 @@ def test_get_movimentations(
         ),
     ],
 )
-def test_run_processes(process_number, expected):
+def test_selenium_run_processes(process_number, expected):
     from core.scrapper.selenium.app import ProcessesScraping
 
     scraping = ProcessesScraping()

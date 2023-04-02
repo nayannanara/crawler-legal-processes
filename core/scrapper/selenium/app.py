@@ -17,9 +17,9 @@ class ProcessesScraping:
     def __init__(self: 'ProcessesScraping') -> None:
         self.process_number: str = ''
 
-    def run(self: 'ProcessesScraping', input: str) -> list[dict[str, str]]:
+    def run(self: 'ProcessesScraping', input: str) -> list[dict[str, Any]]:
         processes = input.split(',')
-        payload: list[dict[str, str]] = []
+        payload: list[dict[str, Any]] = []
 
         for process in processes:
             self.process_number = process.strip()
@@ -55,6 +55,8 @@ class ProcessesScraping:
                         self.driver.get(url)
                         self.get_basic_data(payload)
 
+        logger.info('Extração de dados finalizada')
+
         return payload
 
     def verify_url(self: 'ProcessesScraping', url: str) -> list[str]:
@@ -81,8 +83,10 @@ class ProcessesScraping:
         return new_urls
 
     def get_basic_data(
-        self: 'ProcessesScraping', payload: list[dict[str, str]]
+        self: 'ProcessesScraping', payload: list
     ) -> None:
+        logger.info('Iniciando extração dos dados básicos do processo')
+
         details = self.driver.find_element(By.ID, 'maisDetalhes')
 
         self.driver.execute_script(
@@ -152,6 +156,8 @@ class ProcessesScraping:
         payload.append(data)
 
     def get_process_parties(self: 'ProcessesScraping') -> dict[Any, Any]:
+        logger.info('Iniciando extração das partes do processo')
+
         try:
             process_parties_table = self.driver.find_element(
                 By.ID, 'tableTodasPartes'
@@ -204,6 +210,8 @@ class ProcessesScraping:
         return data
 
     def get_movimentations(self: 'ProcessesScraping') -> list[Any]:
+        logger.info('Iniciando extração das movimentações do processo')
+
         movimentations_table = self.driver.find_element(
             By.ID, 'tabelaTodasMovimentacoes'
         )
