@@ -21,6 +21,7 @@ Caso opte por usar pyenv, após instalar, execute:
 ```bash
 pyenv virtualenv 3.11.1 crawler
 pyenv activate crawler
+pip install -r requirements.txt
 ```
 Para subir o banco de dados, caso não tenha o [docker](https://docs.docker.com/engine/install/ubuntu/) e o [docker-compose](https://docs.docker.com/compose/install/linux/) instalado, faça a instalação e logo em seguida, execute:
 
@@ -42,7 +43,7 @@ make run
 ```
 e acesse: http://127.0.0.1:8000/docs
 
-## Extração de criação de um processo
+## Extração e criação de um processo
 
 
 Para extrair dados de um processo e cadastrá-lo na base, execute a seguinte `request`:
