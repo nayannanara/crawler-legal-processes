@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     """
 
     API_VERSION: str = '/api/v0'
-    DB_URL: str = 'postgresql+asyncpg://crawler_processes:crawler_processes@localhost/crawler_processes'
+    DB_URL: str = 'postgresql+asyncpg://crawler_processes:crawler_processes@localhost/crawler_processes'   # noqa
 
     class Config:
         case_sensitive = True

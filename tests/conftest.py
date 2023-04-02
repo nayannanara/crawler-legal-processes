@@ -8,8 +8,7 @@ from pytest_mock import MockerFixture
 from selenium.webdriver.common.by import By
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from core.configs.database import async_session, engine
-from core.configs.deps import get_session
+from core.configs.database import async_session, engine, get_session
 from core.contrib.models import BaseModel
 from core.processes.schemas import ProcessIn
 from core.processes.usecases import ProcessUseCase
@@ -101,7 +100,8 @@ def payload() -> dict:
             'movimentations': [
                 {
                     'date': '22/02/2021',
-                    'description': 'Remetido recurso eletrônico ao Tribunal de Justiça/Turma de recurso',
+                    'description': 'Remetido recurso eletrônico ao '
+                    + 'Tribunal de Justiça/Turma de recurso',
                 }
             ],
         }
@@ -237,23 +237,31 @@ def teste():
             'movimentations': [
                 {
                     'date': '22/02/2021',
-                    'description': 'Remetido recurso eletrônico ao Tribunal de Justiça/Turma de recurso',
+                    'description': 'Remetido recurso eletrônico ao '
+                    + 'Tribunal de Justiça/Turma de recurso',
                 },
                 {
                     'date': '10/02/2021',
-                    'description': 'Juntada de Documento\nNº Protocolo: WMAC.21.70031538-2 Tipo da Petição: Contrarrazões Data: 10/02/2021 19:27',
+                    'description': 'Juntada de Documento\nNº Protocolo: '
+                    + 'WMAC.21.70031538-2 Tipo da Petição: Contrarrazões '
+                    + 'Data: 10/02/2021 19:27',
                 },
                 {
                     'date': '06/01/2021',
-                    'description': 'Ato Publicado\nRelação :0003/2021 Data da Publicação: 21/01/2021 Número do Diário: 2738',
+                    'description': 'Ato Publicado\nRelação :'
+                    + '0003/2021 Data da Publicação: 21/01/2021 '
+                    + 'Número do Diário: 2738',
                 },
                 {
                     'date': '06/01/2021',
-                    'description': 'Ato Publicado\nRelação :0003/2021 Data da Publicação: 21/01/2021 Número do Diário: 2738',
+                    'description': 'Ato Publicado\nRelação :0003/2021 '
+                    + 'Data da Publicação: 21/01/2021 Número do Diário: 2738',
                 },
                 {
                     'date': '06/01/2021',
-                    'description': 'Ato Publicado\nRelação :0003/2021 Data da Publicação: 21/01/2021 Número do Diário: 2738',
+                    'description': 'Ato Publicado\nRelação :'
+                    + '0003/2021 Data da Publicação: 21/01/2021 Número '
+                    + 'do Diário: 2738',
                 },
             ],
             'created_at': '2023-04-02T11:05:02.247909',

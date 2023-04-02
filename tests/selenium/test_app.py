@@ -61,7 +61,8 @@ def test_selenium_get_movimentations(
     assert len(result) > 1
     assert result[0] == {
         'date': '22/02/2021',
-        'description': 'Remetido recurso eletrônico ao Tribunal de Justiça/Turma de recurso',
+        'description': 'Remetido recurso eletrônico'
+        + ' ao Tribunal de Justiça/Turma de recurso',
     }
 
 

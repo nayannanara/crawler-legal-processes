@@ -1,3 +1,7 @@
+env: local.env
+	@cp -n local.env .env || echo "NOTE: review your .env file comparing with local.env"
+	@touch .env
+
 test:
 	@pytest -k 'not test_selenium' 
 
@@ -26,9 +30,12 @@ blue:
 blue-check:
 	@blue --check .
 
+dead-fixtures:
+	@run pytest --dead-fixtures
+
 lint: isort blue
 
-lint-check: mypy flake8 isort-check blue-check bandit dead-fixtures
+lint-check: mypy flake8 isort isort-check blue-check dead-fixtures
 
 build: lint-check test
 

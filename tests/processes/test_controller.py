@@ -100,7 +100,7 @@ async def test_integration_post_processes_should_return_internal_server_error(
     }
 
 
-async def test_integration_post_processes_with_more_than_one_process_should_return_success(
+async def test_integration_post_processes_with_more_than_one_process_should_return_success(  # noqa
     client, post_url, process_number_tjce, process_number_tjal
 ):
     response = await client.post(

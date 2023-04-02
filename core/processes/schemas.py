@@ -12,7 +12,8 @@ class Movimentation(BaseSchemaMixin):
     description: str = Field(
         ...,
         title='Movimentation description',
-        example='Remetido recurso eletrônico ao Tribunal de Justiça/Turma de recurso',
+        example='Remetido recurso eletrônico ao'
+        + ' Tribunal de Justiça/Turma de recurso',
     )
 
 
@@ -65,7 +66,8 @@ class Process(BaseSchemaMixin):
         example=[
             {
                 'date': '22/02/2021',
-                'description': 'Remetido recurso eletrônico ao Tribunal de Justiça/Turma de recurso',
+                'description': 'Remetido recurso eletrônico'
+                + ' ao Tribunal de Justiça/Turma de recurso',
             }
         ],
     )

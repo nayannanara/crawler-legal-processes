@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Body, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.configs.deps import get_session
+from core.configs.database import get_session
 from core.contrib.exceptions import DatabaseException, ObjectNotFound
 from core.processes.schemas import ProcessIn, ProcessOut
 from core.processes.usecases import ProcessUseCase
